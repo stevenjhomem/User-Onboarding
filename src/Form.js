@@ -3,15 +3,21 @@ import * as yup from 'yup';
 import axios from 'axios'
 import './App.css';
 
+const schema = yup.object().shape({
+    user : yup.string().required('You must enter your first and last name to submit this form.').min(6, 'Name must be more than 6 characters'),
+    contactInfo : yup.string().required('You must enter a valid email address to submit this form.'),
+    password : yup.string().required('You need a password to protect your data'),
+    doesAgree : yup.boolean().oneOf([true], 'You must agree to our terms of service to submit this form'),
+});
+
+const initialFormValues = {
+    user : '',
+    contactInfo : '',
+    password : '',
+    doesAgree : false,
+};
+
 function Form() {
-
-
-    const initialFormValues = {
-        user : '',
-        contactInfo : '',
-        password : '',
-        doesAgree : false,
-    };
 
     const [formValues, setFormValues ] = useState({
         user : '',
@@ -41,14 +47,9 @@ function Form() {
         setFormValues({...formValues, [name]: valueToUse})
     };
 
-    const schema = yup.object().shape({
-        user : yup.string().required('You must enter your first and last name to submit this form.').min(6, 'Name must be more than 4 characters'),
-        contactInfo : yup.string().required('You must enter a valid email address to submit this form.'),
-        password : yup.string().required('You need a password to protect your data'),
-        doesAgree : yup.boolean().oneOf([true], 'You must agree to our terms of service to submit this form'),
-    });
 
-    useEffect((schema) => {
+
+    useEffect(() => {
         schema.isValid(formValues).then(valid => setDisabled(!valid))
     }, [formValues]);
 
@@ -73,7 +74,7 @@ function Form() {
 
     return (
         <div className = 'formContainer'>
-            <form onSubmit = {submit}>
+            <form id = 'projectForm'onSubmit = {submit}>
                 <div style ={{color: 'red'}}>
                     <div>{errors.user}</div>
                     <div>{errors.contactInfo}</div>
@@ -120,7 +121,7 @@ function Form() {
                     </input>
                 </label>
                 <label>
-                    <button disabled = {disabled}>Submit</button>
+                    <button type = 'submit' disabled = {disabled}>Submit</button>
                 </label>
 
             </form>
